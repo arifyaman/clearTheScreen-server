@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+}
+
+group 'com.xlip.cleanthescreen'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+
+
+dependencies {
+    compile group: 'org.yaml', name: 'snakeyaml', version: '1.11'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
+    compile group: 'org.hibernate', name: 'hibernate-core', version: '5.4.0.Final'
+    compile files('../communication/build/libs/communication-1.0-SNAPSHOT.jar')
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': 'com.xlipstudio.cleanthescreen.server.Server'
+        )
+    }
+    from {
+        (configurations.runtime).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+
+}
