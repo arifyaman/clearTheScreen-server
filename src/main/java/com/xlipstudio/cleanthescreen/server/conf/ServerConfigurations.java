@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 
 
 public class ServerConfigurations {
@@ -14,7 +13,7 @@ public class ServerConfigurations {
     public String serverLogFile;
     public Security security;
     public WaitingRoom waitingRoom;
-
+    public HibernateConfiguration hibarnate;
 
 
     private static ServerConfigurations intance = new ServerConfigurations();
@@ -46,13 +45,24 @@ public class ServerConfigurations {
     }
 
 
-    public static class Security{
+    public static class Security {
         public String encriptorKey;
         public String vector;
     }
 
     public static class WaitingRoom {
         public int maxPoolSize;
+    }
+
+    public static class HibernateConfiguration {
+        public String driverClass;
+        public String url;
+        public String username;
+        public String password;
+        public String showSql;
+        public String sessionContextClass;
+        public String ddlAuto;
+        public String maxActive;
     }
 
 }

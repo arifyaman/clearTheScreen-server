@@ -22,8 +22,6 @@ public class BaseLogger {
 
             fh.setFormatter(new SimpleFormatter());
             LOGGER.addHandler(fh);
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }

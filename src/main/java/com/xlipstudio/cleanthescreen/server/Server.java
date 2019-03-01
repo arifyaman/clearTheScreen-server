@@ -2,8 +2,10 @@ package com.xlipstudio.cleanthescreen.server;
 
 
 import com.xlipstudio.cleanthescreen.server.conf.ServerConfigurations;
+import com.xlipstudio.cleanthescreen.server.hibernate.HibernateUtil;
 import com.xlipstudio.cleanthescreen.server.logging.BaseLogger;
-import com.xlipstudio.cleanthescreen.server.waitingRoom.WaitingRoom;
+import com.xlipstudio.cleanthescreen.server.server.room.RegistrationRoom;
+import com.xlipstudio.cleanthescreen.server.server.room.WaitingRoom;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -15,8 +17,8 @@ public class Server {
     public static void main(String[] args) throws IOException {
         String initVector = ServerConfigurations.getIntance().security.vector;
         String key = ServerConfigurations.getIntance().security.encriptorKey;
-
-        /*HibernateUtil hibernateUtil = HibernateUtil.getInstance();
+        HibernateUtil.init();
+       /*
         User user = new User();
         user.setUserKey("asdas");
 
@@ -43,11 +45,10 @@ public class Server {
 
         try {
             ServerSocket listener = new ServerSocket(ServerConfigurations.getIntance().serverPort);
-            BaseLogger.LOGGER.warning("SERVER STARTED");
+            BaseLogger.LOGGER.info("SERVER STARTED");
             while (true) {
                 Socket socket = listener.accept();
-                WaitingRoom.getIntance().addToPool(socket);
-
+                RegistrationRoom.getInstance().addToPool(socket);
             }
 
         } catch (IOException e) {

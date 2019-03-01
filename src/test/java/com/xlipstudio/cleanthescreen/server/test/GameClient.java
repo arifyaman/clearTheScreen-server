@@ -1,6 +1,8 @@
 package com.xlipstudio.cleanthescreen.server.test;
 
 import com.xlipstudio.cleanthescreen.communication.Wrap;
+import com.xlipstudio.cleanthescreen.communication.request.Request;
+import com.xlipstudio.cleanthescreen.communication.request.RequestType;
 import com.xlipstudio.cleanthescreen.communication.sub.WrapType;
 
 import java.io.IOException;
@@ -8,10 +10,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class GameClient {
+public class GameClient extends Thread{
     private Socket socket = null;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
+    private final String clientId = "76a8a79duo12ı31n2m";
 
 
     public GameClient() {
@@ -20,37 +23,39 @@ public class GameClient {
             socket = new Socket("localhost", 36813);
             this.outputStream = new ObjectOutputStream(socket.getOutputStream());
             this.inputStream = new ObjectInputStream(socket.getInputStream());
-            join();
-            new Listener().start();
+            register();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Wrap wrap = ((Wrap) inputStream.readObject());
+                System.out.println(wrap.getResponse().getMessage());
+            } catch (IOException e) {
 
-    private class Listener extends Thread {
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    Wrap wrap = ((Wrap) inputStream.readObject());
-                    System.out.println(wrap.getWrapType());
-                } catch (IOException e) {
-
-                }catch (Exception e2) {
-
-                }
+            }catch (Exception e2) {
 
             }
+
         }
     }
 
-    public void join() {
-       Wrap wrap = new Wrap();
-       wrap.setWrapType(WrapType.JOIN);
-       dispatchWrap(wrap);
-        System.out.println("Sent join req");
+    public void register() {
+        Wrap wrap = new Wrap();
+        wrap.setWrapType(WrapType.REQUEST);
+
+        Request request = new Request();
+        request.setRequestType(RequestType.REGISTER);
+        request.setPayload(clientId);
+        wrap.setRequest(request);
+        dispatchWrap(wrap);
+
+
     }
 
     public void dispatchWrap(Wrap wrap) {

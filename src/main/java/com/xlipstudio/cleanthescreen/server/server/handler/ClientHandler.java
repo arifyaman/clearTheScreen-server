@@ -1,14 +1,14 @@
-package com.xlipstudio.cleanthescreen.server.handler;
+package com.xlipstudio.cleanthescreen.server.server.handler;
 
 import com.xlipstudio.cleanthescreen.communication.Wrap;
-import com.xlipstudio.cleanthescreen.communication.sub.WrapType;
+import com.xlipstudio.cleanthescreen.server.hibernate.model.User;
 import com.xlipstudio.cleanthescreen.server.logging.BaseLogger;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.logging.Level;
 
 public class ClientHandler extends Thread {
     private long id;
@@ -17,6 +17,7 @@ public class ClientHandler extends Thread {
     private ObjectInputStream inputStream;
     private boolean dead;
     private ClientHandlerBacks clientHandlerBacks;
+    private User user;
 
 
     public ClientHandler(long id, Socket clientSocket, ClientHandlerBacks clientHandlerBacks) {
@@ -27,7 +28,7 @@ public class ClientHandler extends Thread {
             this.outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
             this.inputStream = new ObjectInputStream(clientSocket.getInputStream());
         } catch (IOException e) {
-          //  e.printStackTrace();
+            //  e.printStackTrace();
         }
 
     }
@@ -38,10 +39,10 @@ public class ClientHandler extends Thread {
 
             try {
                 Wrap wrap = ((Wrap) inputStream.readObject());
-                BaseLogger.LOGGER.info("Client: "+ getId() + " TYPE: "+ wrap.getWrapType());
-                System.out.println();
+                BaseLogger.LOGGER.info("Client: " + getId() + " TYPE: " + wrap.getWrapType());
+                clientHandlerBacks.wrapReceived(wrap, this);
             } catch (IOException e) {
-                if(e.getClass().getName().equals("java.io.EOFException")) {
+                if (e.getClass().getName().equals("java.io.EOFException")) {
                     dead = true;
                     destroy();
                     clientHandlerBacks.removeFromHandles(this);
@@ -51,6 +52,16 @@ public class ClientHandler extends Thread {
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+
+    public void dispatch(Wrap wrap) {
+        try {
+            outputStream.writeObject(wrap);
+        } catch (IOException e) {
+            BaseLogger.LOGGER.log(Level.SEVERE, " Error Dispatch: " , e);
+            e.printStackTrace();
         }
     }
 
@@ -71,8 +82,16 @@ public class ClientHandler extends Thread {
         return id;
     }
 
-    public interface ClientHandlerBacks{
-        void removeFromHandles(ClientHandler clientHandler);
+    public User getUser() {
+        return user;
+    }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public interface ClientHandlerBacks {
+        void removeFromHandles(ClientHandler clientHandler);
+        void wrapReceived(Wrap wrap, ClientHandler from);
     }
 }

@@ -1,12 +1,10 @@
 package com.xlipstudio.cleanthescreen.server.hibernate.model;
 
+import com.xlipstudio.cleanthescreen.server.hibernate.model.sub.Role;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -19,6 +17,12 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    private String name;
+
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
+
+    @Column(unique = true)
     private String userKey;
 
     @CreationTimestamp
@@ -27,6 +31,15 @@ public class User implements Serializable {
     @UpdateTimestamp
     private Date updated;
 
+    private Date lastLogin;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Date getCreated() {
         return created;
@@ -58,5 +71,21 @@ public class User implements Serializable {
 
     public void setUserKey(String userKey) {
         this.userKey = userKey;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Date getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
     }
 }
