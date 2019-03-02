@@ -2,13 +2,13 @@ package com.xlipstudio.cleanthescreen.server.server.room;
 
 
 import com.xlipstudio.cleanthescreen.communication.Wrap;
+import com.xlipstudio.cleanthescreen.communication.response.Response;
 import com.xlipstudio.cleanthescreen.communication.sub.WrapType;
-import com.xlipstudio.cleanthescreen.server.server.handler.ClientHandler;
+import com.xlipstudio.cleanthescreen.server.annotations.WrapHandlerRule;
+import com.xlipstudio.cleanthescreen.server.server.room.rule.WaitingRoomWrapHandler;
 
-import java.net.Socket;
-
+@WrapHandlerRule(ruleClass = WaitingRoomWrapHandler.class)
 public class WaitingRoom extends Room {
-
     private static WaitingRoom instance = new WaitingRoom();
 
     public WaitingRoom() {
@@ -21,21 +21,13 @@ public class WaitingRoom extends Room {
 
 
     @Override
-    public ClientHandler addToPool(Socket socket) {
-      ClientHandler handler = super.addToPool(socket);
-      handler.dispatch(response());
-      return handler;
-    }
+    public Wrap welcomeResponse() {
+        Response response = new Response(true, "Waiting room accepted", "1");
 
-    private Wrap response() {
+
         Wrap wrap = new Wrap();
         wrap.setWrapType(WrapType.RESPONSE);
+        wrap.setResponse(response);
         return wrap;
-    }
-
-
-    @Override
-    public void wrapReceived(Wrap wrap, ClientHandler from) {
-
     }
 }

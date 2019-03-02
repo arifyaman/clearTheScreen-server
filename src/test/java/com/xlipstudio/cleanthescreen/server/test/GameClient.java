@@ -16,6 +16,11 @@ public class GameClient extends Thread{
     private ObjectInputStream inputStream;
     private final String clientId = "76a8a79duo12ı31n2m";
 
+    private static GameClient instance = new GameClient();
+
+    public static GameClient getInstance() {
+        return instance;
+    }
 
     public GameClient() {
 

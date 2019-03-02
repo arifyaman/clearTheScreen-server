@@ -1,4 +1,4 @@
-package com.xlipstudio.cleanthescreen.server.server.handler;
+package com.xlipstudio.cleanthescreen.server.server.helper;
 
 import com.xlipstudio.cleanthescreen.communication.Wrap;
 import com.xlipstudio.cleanthescreen.communication.response.Response;

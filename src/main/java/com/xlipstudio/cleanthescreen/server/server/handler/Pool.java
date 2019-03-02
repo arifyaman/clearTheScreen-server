@@ -1,7 +1,7 @@
 package com.xlipstudio.cleanthescreen.server.server.handler;
 
 import com.xlipstudio.cleanthescreen.communication.Wrap;
-import com.xlipstudio.cleanthescreen.server.logging.BaseLogger;
+import com.xlipstudio.cleanthescreen.server.server.helper.ResponderHelper;
 
 import java.net.Socket;
 import java.util.ArrayList;
@@ -25,10 +25,15 @@ public class Pool implements ClientHandler.ClientHandlerBacks {
         return handler;
     }
 
+    private ClientHandler addToPool(ClientHandler clientHandler) {
+        clientHandler.setId(clientHandlers.size());
+        clientHandlers.add(clientHandler);
+        return clientHandler;
+    }
+
     @Override
     public void removeFromHandles(ClientHandler clientHandler) {
         clientHandlers.remove(clientHandler);
-        BaseLogger.LOGGER.info("Removed from Handlers " + clientHandler.getId());
     }
 
 
@@ -40,13 +45,31 @@ public class Pool implements ClientHandler.ClientHandlerBacks {
 
     }
 
+    public ClientHandler moveToPool(ClientHandler clientHandler, Pool target) {
+        removeFromHandles(clientHandler);
+        return target.addToPool(clientHandler.changeClientHandlerBacks(target));
+    }
+
+    public void moveAllToPool(Pool target) {
+        for (ClientHandler handler :
+                clientHandlers) {
+            moveToPool(handler, target);
+        }
+    }
+
+    public Wrap welcomeResponse() {
+
+        return null;
+    }
+
+
     @Override
     public void wrapReceived(Wrap wrap, ClientHandler from) {
         this.poolCallBacks.wrapReceived(wrap, from);
     }
 
 
-    public interface PoolCallBacks{
+    public interface PoolCallBacks {
         void wrapReceived(Wrap wrap, ClientHandler from);
     }
 }
