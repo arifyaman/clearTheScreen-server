@@ -1,0 +1,33 @@
+package com.xlipstudio.cleanthescreen.server.server.game;
+
+import com.xlipstudio.cleanthescreen.server.server.room.GameRoom;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class GameSaloon {
+    private static GameSaloon instance = new GameSaloon();
+    private List<GameRoom> gameRooms;
+
+    public GameSaloon() {
+        this.gameRooms = new ArrayList<>();
+    }
+
+    public static GameSaloon getInstance() {
+        return instance;
+    }
+
+    public GameRoom getAvailableRoom() {
+        for (GameRoom room : gameRooms) {
+            if (room.isWaitingPlayer()) {
+                return room;
+            }
+        }
+
+        GameRoom gameRoom = new GameRoom();
+        gameRooms.add(gameRoom);
+        return gameRoom;
+    }
+
+
+}

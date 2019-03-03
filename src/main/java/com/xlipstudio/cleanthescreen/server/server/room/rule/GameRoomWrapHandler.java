@@ -8,21 +8,14 @@ import com.xlipstudio.cleanthescreen.server.server.handler.ClientHandler;
 import com.xlipstudio.cleanthescreen.server.server.handler.Pool;
 import com.xlipstudio.cleanthescreen.server.server.room.RegistrationRoom;
 
-@AllowedReqTypes(types = {RequestType.EXIT})
-public class WaitingRoomWrapHandler extends BaseWrapHandler {
+@AllowedReqTypes(types = {RequestType.EXIT, RequestType.DELETE_CELL})
+public class GameRoomWrapHandler extends BaseWrapHandler {
 
     @Override
     public Wrap processReceivedWrap(Wrap wrap, ClientHandler clientHandler, Pool pool) {
         return null;
     }
 
-    @HandleRequest(type = RequestType.EXIT)
-    public Wrap handleExitReq(Wrap wrap, ClientHandler clientHandler, Pool pool) {
-
-        getOriginRoom().moveToRoom(clientHandler, RegistrationRoom.getInstance());
-        return responderHelper.basicSuccess;
-
-    }
 
 
 }

@@ -22,13 +22,23 @@ public class Pool implements ClientHandler.ClientHandlerBacks {
         ClientHandler handler = new ClientHandler(clientHandlers.size(), socket, this);
         handler.start();
         clientHandlers.add(handler);
+        poolCallBacks.newJoin(handler);
         return handler;
     }
 
     private ClientHandler addToPool(ClientHandler clientHandler) {
         clientHandler.setId(clientHandlers.size());
         clientHandlers.add(clientHandler);
+        welcomeClientHander(clientHandler);
+        poolCallBacks.newJoin(clientHandler);
         return clientHandler;
+    }
+
+    private void welcomeClientHander(ClientHandler handler) {
+        Wrap welcomeResponse = poolCallBacks.welcomeResponse();
+        if(welcomeResponse != null){
+            handler.dispatch(welcomeResponse);
+        }
     }
 
     @Override
@@ -46,30 +56,28 @@ public class Pool implements ClientHandler.ClientHandlerBacks {
     }
 
     public ClientHandler moveToPool(ClientHandler clientHandler, Pool target) {
-        removeFromHandles(clientHandler);
+        clientHandlers.remove(clientHandler);
         return target.addToPool(clientHandler.changeClientHandlerBacks(target));
     }
 
     public void moveAllToPool(Pool target) {
-        for (ClientHandler handler :
-                clientHandlers) {
+        for (ClientHandler handler : clientHandlers) {
             moveToPool(handler, target);
         }
     }
-
-    public Wrap welcomeResponse() {
-
-        return null;
-    }
-
 
     @Override
     public void wrapReceived(Wrap wrap, ClientHandler from) {
         this.poolCallBacks.wrapReceived(wrap, from);
     }
 
+    public List<ClientHandler> getClientHandlers() {
+        return clientHandlers;
+    }
 
     public interface PoolCallBacks {
         void wrapReceived(Wrap wrap, ClientHandler from);
+        void newJoin(ClientHandler clientHandler);
+        Wrap welcomeResponse();
     }
 }

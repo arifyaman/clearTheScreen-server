@@ -1,5 +1,7 @@
 package com.xlipstudio.cleanthescreen.server.conf;
 
+import com.xlipstudio.cleanthescreen.server.hibernate.HibernateUtil;
+import com.xlipstudio.cleanthescreen.server.hibernate.model.GameConf;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -14,6 +16,8 @@ public class ServerConfigurations {
     public Security security;
     public WaitingRoom waitingRoom;
     public HibernateConfiguration hibarnate;
+
+    public GameConf gameConf;
 
 
     private static ServerConfigurations intance = new ServerConfigurations();

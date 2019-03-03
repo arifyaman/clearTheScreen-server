@@ -9,6 +9,8 @@ import com.xlipstudio.cleanthescreen.server.server.room.rule.BaseWrapHandler;
 import com.xlipstudio.cleanthescreen.server.server.room.rule.RuleHolder;
 
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Room implements Pool.PoolCallBacks {
     protected Pool pool;
@@ -21,18 +23,21 @@ public abstract class Room implements Pool.PoolCallBacks {
 
     public ClientHandler addToPool(Socket socket) {
         ClientHandler clientHandler = pool.addToPool(socket);
-        welcomeClientHander(clientHandler);
         return clientHandler;
     }
 
     public ClientHandler moveToRoom(ClientHandler clientHandler, Room target) {
         ClientHandler created = pool.moveToPool(clientHandler, target.getPool());
-        target.welcomeClientHander(created);
         return created;
     }
 
     public void moveAllToRoom(Room target) {
-        pool.moveAllToPool(target.getPool());
+        List<ClientHandler> temp = new ArrayList<>(pool.getClientHandlers());
+
+        for (ClientHandler clientHandler : temp) {
+            moveToRoom(clientHandler, target);
+        }
+        temp.clear();
     }
 
     public Pool getPool() {
@@ -61,11 +66,15 @@ public abstract class Room implements Pool.PoolCallBacks {
     public void wrapReceived(Wrap wrap, ClientHandler from) {
         try {
             BaseWrapHandler baseWrapHandler = RuleHolder.getInstance().getByClass(this.getClass().getAnnotation(WrapHandlerRule.class).ruleClass());
+            baseWrapHandler.setOriginRoom(this);
             baseWrapHandler.handleWrap(wrap, from, pool);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    @Override
+    public void newJoin(ClientHandler clientHandler) {
 
+    }
 }

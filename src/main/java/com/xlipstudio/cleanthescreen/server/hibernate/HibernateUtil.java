@@ -1,6 +1,7 @@
 package com.xlipstudio.cleanthescreen.server.hibernate;
 
 import com.xlipstudio.cleanthescreen.server.conf.ServerConfigurations;
+import com.xlipstudio.cleanthescreen.server.hibernate.model.GameConf;
 import com.xlipstudio.cleanthescreen.server.hibernate.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -21,6 +22,7 @@ public class HibernateUtil {
     public static HibernateUtil getInstance() {
         return instance;
     }
+
     public Session session;
 
 
@@ -30,34 +32,33 @@ public class HibernateUtil {
 
     public HibernateUtil() {
 
-            try {
-                java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
+        try {
+            java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
 
-                Configuration configuration = new Configuration();
-                // Hibernate settings equivalent to hibernate.cfg.xml's properties
-                Properties settings = new Properties();
-                settings.put(Environment.DRIVER, ServerConfigurations.getIntance().hibarnate.driverClass);
-                settings.put(Environment.URL, ServerConfigurations.getIntance().hibarnate.url);
-                settings.put(Environment.USER, ServerConfigurations.getIntance().hibarnate.username);
-                settings.put(Environment.PASS, ServerConfigurations.getIntance().hibarnate.password);
-                settings.put(Environment.SHOW_SQL, ServerConfigurations.getIntance().hibarnate.showSql);
-                settings.put(Environment.AUTO_CLOSE_SESSION, ServerConfigurations.getIntance().hibarnate.showSql);
-                settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, ServerConfigurations.getIntance().hibarnate.sessionContextClass);
-                settings.put(Environment.HBM2DDL_AUTO, ServerConfigurations.getIntance().hibarnate.ddlAuto);
-                configuration.setProperties(settings);
-                configuration.addAnnotatedClass(User.class);
-                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties()).build();
-                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+            Configuration configuration = new Configuration();
+            // Hibernate settings equivalent to hibernate.cfg.xml's properties
+            Properties settings = new Properties();
+            settings.put(Environment.DRIVER, ServerConfigurations.getIntance().hibarnate.driverClass);
+            settings.put(Environment.URL, ServerConfigurations.getIntance().hibarnate.url);
+            settings.put(Environment.USER, ServerConfigurations.getIntance().hibarnate.username);
+            settings.put(Environment.PASS, ServerConfigurations.getIntance().hibarnate.password);
+            settings.put(Environment.SHOW_SQL, ServerConfigurations.getIntance().hibarnate.showSql);
+            settings.put(Environment.AUTO_CLOSE_SESSION, ServerConfigurations.getIntance().hibarnate.showSql);
+            settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, ServerConfigurations.getIntance().hibarnate.sessionContextClass);
+            settings.put(Environment.HBM2DDL_AUTO, ServerConfigurations.getIntance().hibarnate.ddlAuto);
+            configuration.setProperties(settings);
+            configuration.addAnnotatedClass(User.class);
+            configuration.addAnnotatedClass(GameConf.class);
+            ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
+            sessionFactory = configuration.buildSessionFactory(serviceRegistry);
+            this.session = sessionFactory.openSession();
+            ServerConfigurations.getIntance().gameConf = getModel(1, GameConf.class);
 
 
-
-
-                this.session = sessionFactory.openSession();
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -72,9 +73,9 @@ public class HibernateUtil {
             // start a transaction
             transaction = session.beginTransaction();
             // save the user object
-            if(user.getId() == 0) {
-               user.setId ((Long) session.save(user));
-            }else {
+            if (user.getId() == 0) {
+                user.setId((Long) session.save(user));
+            } else {
                 session.saveOrUpdate(user);
             }
 
@@ -91,15 +92,14 @@ public class HibernateUtil {
     }
 
     public <T> T getModel(long id, Class<T> tClass) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            T model = session.get(tClass, id);
-            session.close();
-            return model;
-        }
+
+        T model = session.get(tClass, id);
+        return model;
+
     }
 
     public User searchByUserKey(String userKey) {
-        Query query= session.createQuery("from User where userKey=:userKey");
+        Query query = session.createQuery("from User where userKey=:userKey");
         query.setParameter("userKey", userKey);
         User user = (User) query.uniqueResult();
         return user;

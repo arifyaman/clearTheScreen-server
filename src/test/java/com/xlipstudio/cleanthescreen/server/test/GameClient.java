@@ -40,7 +40,12 @@ public class GameClient extends Thread{
         while (true) {
             try {
                 Wrap wrap = ((Wrap) inputStream.readObject());
-                System.out.println(wrap.getResponse().getMessage());
+                String log = wrap.getResponse().getMessage() + "  "+wrap.getResponse().getCode();
+                if(wrap.getResponse().getPayload() != null) {
+                    log += "  " + wrap.getResponse().getPayload().getClass().getName();
+                }
+
+                System.out.println( log);
             } catch (IOException e) {
 
             }catch (Exception e2) {

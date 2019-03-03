@@ -9,7 +9,6 @@ import com.xlipstudio.cleanthescreen.server.hibernate.model.User;
 import com.xlipstudio.cleanthescreen.server.hibernate.model.sub.Role;
 import com.xlipstudio.cleanthescreen.server.server.handler.ClientHandler;
 import com.xlipstudio.cleanthescreen.server.server.handler.Pool;
-import com.xlipstudio.cleanthescreen.server.server.room.RegistrationRoom;
 import com.xlipstudio.cleanthescreen.server.server.room.WaitingRoom;
 
 import java.util.Date;
@@ -33,7 +32,7 @@ public class RegistrationWrapHandler extends BaseWrapHandler {
     @HandleRequest(type = RequestType.GO)
     public Wrap handleGoReq(Wrap wrap, ClientHandler clientHandler, Pool pool) {
         if (wrap.getRequest().getPayload().equals("PLAY")) {
-            RegistrationRoom.getInstance().moveToRoom(clientHandler, WaitingRoom.getInstance());
+            getOriginRoom().moveToRoom(clientHandler, WaitingRoom.getInstance());
             return responderHelper.basicSuccess;
         }
         return responderHelper.notAllowed;

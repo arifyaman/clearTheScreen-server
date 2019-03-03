@@ -5,13 +5,11 @@ import com.xlipstudio.cleanthescreen.communication.request.RequestType;
 import com.xlipstudio.cleanthescreen.communication.sub.WrapType;
 import com.xlipstudio.cleanthescreen.server.annotations.AllowedReqTypes;
 import com.xlipstudio.cleanthescreen.server.annotations.HandleRequest;
-import com.xlipstudio.cleanthescreen.server.annotations.WrapHandlerRule;
 import com.xlipstudio.cleanthescreen.server.server.handler.ClientHandler;
 import com.xlipstudio.cleanthescreen.server.server.handler.Pool;
 import com.xlipstudio.cleanthescreen.server.server.helper.ResponderHelper;
+import com.xlipstudio.cleanthescreen.server.server.room.Room;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +17,7 @@ import java.util.List;
 
 public abstract class BaseWrapHandler {
     ResponderHelper responderHelper = new ResponderHelper();
+    private Room originRoom;
 
 
     public Wrap handleWrap(Wrap wrap, ClientHandler clientHandler, Pool pool) {
@@ -30,9 +29,9 @@ public abstract class BaseWrapHandler {
                     for (final Method method : allMethods) {
                         if (method.isAnnotationPresent(HandleRequest.class)) {
                             HandleRequest requestAnnotation = method.getAnnotation(HandleRequest.class);
-                            if(requestAnnotation.type().equals(wrap.getRequest().getRequestType())) {
+                            if (requestAnnotation.type().equals(wrap.getRequest().getRequestType())) {
                                 try {
-                                   return ((Wrap) method.invoke(this, wrap, clientHandler, pool));
+                                    return ((Wrap) method.invoke(this, wrap, clientHandler, pool));
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -44,7 +43,7 @@ public abstract class BaseWrapHandler {
                 }
             }
         }
-         clientHandler.dispatch(responderHelper.notAllowed);
+        clientHandler.dispatch(responderHelper.notAllowed);
         return null;
     }
 
@@ -53,7 +52,14 @@ public abstract class BaseWrapHandler {
      * @param wrap request wrap
      * @return response Wrap
      */
-    public abstract Wrap processReceivedWrap(Wrap wrap,ClientHandler clientHandler, Pool pool);
+    public abstract Wrap processReceivedWrap(Wrap wrap, ClientHandler clientHandler, Pool pool);
 
 
+    public Room getOriginRoom() {
+        return originRoom;
+    }
+
+    public void setOriginRoom(Room originRoom) {
+        this.originRoom = originRoom;
+    }
 }
