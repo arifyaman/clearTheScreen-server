@@ -64,8 +64,6 @@ public class GameClient extends Thread{
         request.setPayload(clientId);
         wrap.setRequest(request);
         dispatchWrap(wrap);
-
-
     }
 
     public void dispatchWrap(Wrap wrap) {

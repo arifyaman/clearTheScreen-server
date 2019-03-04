@@ -39,19 +39,20 @@ public class ClientHandler extends Thread {
 
             try {
                 Wrap wrap = ((Wrap) inputStream.readObject());
-                if(wrap.getRequest() != null) {
+                if (wrap.getRequest() != null) {
                     BaseLogger.LOGGER.info("Client: " + getId() + " TYPE: " + wrap.getRequest().getRequestType());
                 }
                 clientHandlerBacks.wrapReceived(wrap, this);
             } catch (IOException e) {
-                if (e.getClass().getName().equals("java.io.EOFException")) {
-                    dead = true;
-                    destroy();
-                    clientHandlerBacks.removeFromHandles(this);
-                    BaseLogger.LOGGER.info("Removed from Handlers " + getId());
-                    break;
-                }
-                e.printStackTrace();
+
+                dead = true;
+                destroy();
+                clientHandlerBacks.removeFromHandles(this);
+                BaseLogger.LOGGER.info("Removed from Handlers " + getId());
+
+                break;
+
+
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -63,7 +64,7 @@ public class ClientHandler extends Thread {
         try {
             outputStream.writeObject(wrap);
         } catch (IOException e) {
-            BaseLogger.LOGGER.log(Level.SEVERE, " Error Dispatch: " , e);
+            BaseLogger.LOGGER.log(Level.SEVERE, " Error Dispatch: ", e);
             e.printStackTrace();
         }
     }
@@ -104,6 +105,7 @@ public class ClientHandler extends Thread {
 
     public interface ClientHandlerBacks {
         void removeFromHandles(ClientHandler clientHandler);
+
         void wrapReceived(Wrap wrap, ClientHandler from);
     }
 }
