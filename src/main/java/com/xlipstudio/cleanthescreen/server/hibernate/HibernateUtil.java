@@ -2,7 +2,10 @@ package com.xlipstudio.cleanthescreen.server.hibernate;
 
 import com.xlipstudio.cleanthescreen.server.conf.ServerConfigurations;
 import com.xlipstudio.cleanthescreen.server.hibernate.model.GameConf;
+import com.xlipstudio.cleanthescreen.server.hibernate.model.GameMatch;
+import com.xlipstudio.cleanthescreen.server.hibernate.model.Player;
 import com.xlipstudio.cleanthescreen.server.hibernate.model.User;
+import com.xlipstudio.cleanthescreen.server.hibernate.model.sub.BaseEntity;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -46,9 +49,12 @@ public class HibernateUtil {
             settings.put(Environment.AUTO_CLOSE_SESSION, ServerConfigurations.getIntance().hibarnate.showSql);
             settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, ServerConfigurations.getIntance().hibarnate.sessionContextClass);
             settings.put(Environment.HBM2DDL_AUTO, ServerConfigurations.getIntance().hibarnate.ddlAuto);
+
             configuration.setProperties(settings);
             configuration.addAnnotatedClass(User.class);
             configuration.addAnnotatedClass(GameConf.class);
+            configuration.addAnnotatedClass(GameMatch.class);
+            configuration.addAnnotatedClass(Player.class);
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties()).build();
             sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -91,6 +97,17 @@ public class HibernateUtil {
         return null;
     }
 
+    public <T extends BaseEntity> T saveOrUpdate(T object, Class<T> type) {
+        Transaction transaction = session.beginTransaction();
+
+        if(object.getId() == 0) {
+            object.setId((Long) session.save(object));
+        }
+        session.saveOrUpdate(object);
+        transaction.commit();
+        return object;
+    }
+
     public <T> T getModel(long id, Class<T> tClass) {
 
         T model = session.get(tClass, id);
@@ -103,6 +120,13 @@ public class HibernateUtil {
         query.setParameter("userKey", userKey);
         User user = (User) query.uniqueResult();
         return user;
+    }
+
+    public Player searchPlayerByUser(User user) {
+        Query query = session.createQuery("from Player where user=:user");
+        query.setParameter("user", user);
+        Player player = (Player) query.uniqueResult();
+        return player;
     }
 
 

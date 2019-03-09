@@ -1,5 +1,7 @@
 package com.xlipstudio.cleanthescreen.server.server.game;
 
+import com.xlipstudio.cleanthescreen.communication.Wrap;
+import com.xlipstudio.cleanthescreen.server.logging.BaseLogger;
 import com.xlipstudio.cleanthescreen.server.server.room.GameRoom;
 
 import java.util.ArrayList;
@@ -27,6 +29,14 @@ public class GameSaloon {
         GameRoom gameRoom = new GameRoom();
         gameRooms.add(gameRoom);
         return gameRoom;
+    }
+
+    public void dispatchToAll(Wrap wrap) {
+        for (GameRoom room : gameRooms) {
+            room.dispatchToPool(wrap);
+        }
+        BaseLogger.LOGGER.info("Dispatched to game saloon");
+
     }
 
 

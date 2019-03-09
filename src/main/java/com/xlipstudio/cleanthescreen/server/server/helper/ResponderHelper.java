@@ -17,8 +17,8 @@ public class ResponderHelper {
     }
 
     public ResponderHelper() {
-        this.notAllowed = new Wrap(new Response(false, "Not allowed", "-100"), WrapType.RESPONSE);
-        this.basicError = new Wrap(new Response(false, "Failed", "-1"), WrapType.RESPONSE);
-        this.basicSuccess = new Wrap(new Response(true, "Success", "1"), WrapType.RESPONSE);
+        this.notAllowed = new Wrap(WrapType.RESPONSE, new Response(false, "Not allowed", "-100"));
+        this.basicError = new Wrap(WrapType.RESPONSE,new Response(false, "Failed", "-1"));
+        this.basicSuccess = new Wrap(WrapType.RESPONSE,new Response(true, "Success", "1"));
     }
 }

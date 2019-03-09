@@ -1,5 +1,6 @@
 package com.xlipstudio.cleanthescreen.server.server.room;
 
+import com.google.gson.Gson;
 import com.xlipstudio.cleanthescreen.communication.Wrap;
 import com.xlipstudio.cleanthescreen.server.annotations.WrapHandlerRule;
 import com.xlipstudio.cleanthescreen.server.server.handler.ClientHandler;
@@ -15,10 +16,12 @@ import java.util.List;
 public abstract class Room implements Pool.PoolCallBacks {
     protected Pool pool;
     protected ResponderHelper responderHelper;
+    protected Gson gson;
 
     public Room() {
         this.pool = new Pool(this);
         this.responderHelper = ResponderHelper.getInstance();
+        this.gson = new Gson();
     }
 
     public ClientHandler addToPool(Socket socket) {

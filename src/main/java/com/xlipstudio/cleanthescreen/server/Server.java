@@ -46,6 +46,7 @@ public class Server {
         try {
             ServerSocket listener = new ServerSocket(ServerConfigurations.getIntance().serverPort);
             BaseLogger.LOGGER.info("SERVER STARTED");
+            new InputListener().start();
             while (true) {
                 Socket socket = listener.accept();
                 RegistrationRoom.getInstance().addToPool(socket);

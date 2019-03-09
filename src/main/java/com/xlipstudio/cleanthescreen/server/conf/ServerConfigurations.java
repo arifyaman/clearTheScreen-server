@@ -67,6 +67,7 @@ public class ServerConfigurations {
         public String sessionContextClass;
         public String ddlAuto;
         public String maxActive;
+        public String dialect;
     }
 
 }

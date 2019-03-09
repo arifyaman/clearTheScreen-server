@@ -1,5 +1,6 @@
 package com.xlipstudio.cleanthescreen.server.hibernate.model;
 
+import com.xlipstudio.cleanthescreen.server.hibernate.model.sub.BaseEntity;
 import com.xlipstudio.cleanthescreen.server.hibernate.model.sub.Role;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -9,13 +10,10 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Entity
-public class User implements Serializable {
+public class User extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 5733840493659566553L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
 
     private String name;
 
@@ -25,11 +23,6 @@ public class User implements Serializable {
     @Column(unique = true)
     private String userKey;
 
-    @CreationTimestamp
-    private Date created;
-
-    @UpdateTimestamp
-    private Date updated;
 
     private Date lastLogin;
 
@@ -39,30 +32,6 @@ public class User implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Date getCreated() {
-        return created;
-    }
-
-    public void setCreated(Date created) {
-        this.created = created;
-    }
-
-    public Date getUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getUserKey() {
