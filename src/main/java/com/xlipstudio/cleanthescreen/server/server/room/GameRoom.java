@@ -26,8 +26,9 @@ public class GameRoom extends Room {
     private int removedCellSize = 0;
     private Player player1;
     private Player player2;
-    Wrap winnerWrap = new Wrap(WrapType.RESPONSE, new Response(true,"You won", "100"));
-    Wrap loserWrap = new Wrap(WrapType.RESPONSE, new Response(true,"You lose", "-100"));
+    private Wrap winnerWrap = new Wrap(WrapType.RESPONSE, new Response(true, "You won", "100"));
+    private Wrap loserWrap = new Wrap(WrapType.RESPONSE, new Response(true, "You lose", "-100"));
+    private GameMatch match;
 
 
     public GameRoom() {
@@ -59,6 +60,8 @@ public class GameRoom extends Room {
     }
 
     public void initGame() {
+
+
         for (long i = 0; i < ServerConfigurations.getIntance().gameConf.getCellSize(); i++) {
             cells.put(i, new Cell(i));
         }
@@ -66,6 +69,12 @@ public class GameRoom extends Room {
 
         }
         waitingPlayer = false;
+
+        this.match = new GameMatch();
+        match.setPlayer1(player1);
+        match.setPlayer2(player2);
+        HibernateUtil util = HibernateUtil.getInstance();
+        this.match = util.saveOrUpdate(match, GameMatch.class);
     }
 
     public void removeCell(long id, ClientHandler handler) {
@@ -102,11 +111,14 @@ public class GameRoom extends Room {
         int player2Score = 0;
 
         for (Cell cell : cells.values()) {
-            if (cell.getDestroyer() == player1.getUser()) {
-                player1Score++;
-            } else {
-                player2Score++;
+            if(cell.getDestroyer() != null) {
+                if (cell.getDestroyer() == player1.getUser()) {
+                    player1Score++;
+                } else {
+                    player2Score++;
+                }
             }
+
         }
 
         player1.setRemovedCells(player1.getRemovedCells() + player1Score);
@@ -115,25 +127,31 @@ public class GameRoom extends Room {
         util.saveOrUpdate(player1, Player.class);
         util.saveOrUpdate(player2, Player.class);
 
-        if(player1Score > player2Score) {
+        if(pool.getClientHandlers().size() == 1) {
             winnerWrap.getResponse().setPayload(player1Score);
             pool.getClientHandlers().get(0).dispatch(winnerWrap);
-            loserWrap.getResponse().setPayload(player2Score);
-            pool.getClientHandlers().get(1).dispatch(loserWrap);
-
         }else {
-            winnerWrap.getResponse().setPayload(player1Score);
-            pool.getClientHandlers().get(1).dispatch(winnerWrap);
-            loserWrap.getResponse().setPayload(player2Score);
-            pool.getClientHandlers().get(0).dispatch(loserWrap);
+            if (player1Score > player2Score) {
+                winnerWrap.getResponse().setPayload(player1Score);
+                pool.getClientHandlers().get(0).dispatch(winnerWrap);
+                loserWrap.getResponse().setPayload(player2Score);
+                pool.getClientHandlers().get(1).dispatch(loserWrap);
+
+            } else {
+                winnerWrap.getResponse().setPayload(player1Score);
+                pool.getClientHandlers().get(1).dispatch(winnerWrap);
+                loserWrap.getResponse().setPayload(player2Score);
+                pool.getClientHandlers().get(0).dispatch(loserWrap);
+            }
         }
-        GameMatch match = new GameMatch();
-        match.setPlayer1(player1);
-        match.setPlayer2(player2);
-        match.setEndTime(new Date());
+
+
+
         match.setPlayer1Score(player1Score);
         match.setPlayer2Score(player2Score);
-        util.saveOrUpdate(match, GameMatch.class);
+        match.setEndTime(new Date());
+        match = util.saveOrUpdate(match, GameMatch.class);
+
     }
 
     @Override
@@ -146,7 +164,30 @@ public class GameRoom extends Room {
         return wrap;
     }
 
+    @Override
+    public void disconnected(ClientHandler clientHandler) {
+        super.disconnected(clientHandler);
+        if(pool.getClientHandlers().size() == 1) {
+            gameFinished();
+        }else if(pool.getClientHandlers().size() == 0) {
+            resetRoom();
+        }
+
+
+    }
+
     public boolean isWaitingPlayer() {
         return waitingPlayer;
+    }
+
+    private void resetRoom() {
+        this.waitingPlayer = true;
+        this.cells.clear();
+        this.pool.getClientHandlers().clear();
+        this.match = null;
+        this.player1 = null;
+        this.player2= null;
+        this.removedCellSize = 0;
+        this.gameFinished = false;
     }
 }

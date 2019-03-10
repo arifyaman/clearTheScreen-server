@@ -31,7 +31,7 @@ public class RegistrationWrapHandler extends BaseWrapHandler {
 
     @HandleRequest(type = RequestType.GO)
     public Wrap handleGoReq(Wrap wrap, ClientHandler clientHandler, Pool pool) {
-        if (wrap.getRequest().getPayload().equals("PLAY")) {
+        if (wrap.getRequest().getPayload() != null && wrap.getRequest().getPayload().equals("PLAY")) {
             getOriginRoom().moveToRoom(clientHandler, WaitingRoom.getInstance());
             return responderHelper.basicSuccess;
         }

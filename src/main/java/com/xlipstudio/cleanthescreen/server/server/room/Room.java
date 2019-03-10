@@ -60,6 +60,11 @@ public abstract class Room implements Pool.PoolCallBacks {
 
     }
 
+    @Override
+    public void disconnected(ClientHandler clientHandler) {
+
+    }
+
     public Wrap welcomeResponse() {
         return null;
     }

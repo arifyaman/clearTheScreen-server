@@ -2,14 +2,17 @@ package com.xlipstudio.cleanthescreen.server.server.room.rule;
 
 import com.xlipstudio.cleanthescreen.communication.Wrap;
 import com.xlipstudio.cleanthescreen.communication.request.RequestType;
+import com.xlipstudio.cleanthescreen.communication.response.Response;
+import com.xlipstudio.cleanthescreen.communication.sub.WrapType;
 import com.xlipstudio.cleanthescreen.server.annotations.AllowedReqTypes;
 import com.xlipstudio.cleanthescreen.server.annotations.HandleRequest;
 import com.xlipstudio.cleanthescreen.server.server.handler.ClientHandler;
 import com.xlipstudio.cleanthescreen.server.server.handler.Pool;
 import com.xlipstudio.cleanthescreen.server.server.room.GameRoom;
 import com.xlipstudio.cleanthescreen.server.server.room.RegistrationRoom;
+import com.xlipstudio.cleanthescreen.server.server.room.WaitingRoom;
 
-@AllowedReqTypes(types = {RequestType.EXIT, RequestType.DELETE_CELL})
+@AllowedReqTypes(types = {RequestType.EXIT, RequestType.DELETE_CELL, RequestType.GO})
 public class GameRoomWrapHandler extends BaseWrapHandler {
 
     @Override
@@ -22,6 +25,14 @@ public class GameRoomWrapHandler extends BaseWrapHandler {
         long requestedCellId = ((Long) wrap.getRequest().getPayload());
         ((GameRoom) getOriginRoom()).removeCell(requestedCellId, clientHandler);
     }
+
+    @HandleRequest(type = RequestType.GO)
+    public void goBack(Wrap wrap, ClientHandler clientHandler, Pool pool) {
+        ((GameRoom) getOriginRoom()).moveToRoom(clientHandler, WaitingRoom.getInstance());
+        clientHandler.dispatch(new Wrap(WrapType.RESPONSE, new Response(true,"Moved to waiting room","101")));
+
+    }
+
 
 
 

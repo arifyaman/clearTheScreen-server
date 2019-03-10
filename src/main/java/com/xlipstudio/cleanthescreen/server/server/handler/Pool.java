@@ -42,8 +42,9 @@ public class Pool implements ClientHandler.ClientHandlerBacks {
     }
 
     @Override
-    public void removeFromHandles(ClientHandler clientHandler) {
+    public void disconnected(ClientHandler clientHandler) {
         clientHandlers.remove(clientHandler);
+        poolCallBacks.disconnected(clientHandler);
     }
 
 
@@ -78,6 +79,7 @@ public class Pool implements ClientHandler.ClientHandlerBacks {
     public interface PoolCallBacks {
         void wrapReceived(Wrap wrap, ClientHandler from);
         void newJoin(ClientHandler clientHandler);
+        void disconnected(ClientHandler clientHandler);
         Wrap welcomeResponse();
     }
 }

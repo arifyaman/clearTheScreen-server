@@ -47,7 +47,7 @@ public class ClientHandler extends Thread {
 
                 dead = true;
                 destroy();
-                clientHandlerBacks.removeFromHandles(this);
+                clientHandlerBacks.disconnected(this);
                 BaseLogger.LOGGER.info("Removed from Handlers " + getId());
 
                 break;
@@ -104,7 +104,7 @@ public class ClientHandler extends Thread {
     }
 
     public interface ClientHandlerBacks {
-        void removeFromHandles(ClientHandler clientHandler);
+        void disconnected(ClientHandler clientHandler);
 
         void wrapReceived(Wrap wrap, ClientHandler from);
     }
