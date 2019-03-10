@@ -1,6 +1,6 @@
 package com.xlipstudio.cleanthescreen.server.conf;
 
-import com.xlipstudio.cleanthescreen.server.hibernate.HibernateUtil;
+import com.xlipstudio.cleanthescreen.server.Server;
 import com.xlipstudio.cleanthescreen.server.hibernate.model.GameConf;
 import org.yaml.snakeyaml.Yaml;
 
@@ -8,15 +8,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URL;
 
 
 public class ServerConfigurations {
+    public String env;
     public int serverPort;
     public String serverLogFile;
     public Security security;
     public WaitingRoom waitingRoom;
     public HibernateConfiguration hibarnate;
-
     public GameConf gameConf;
 
 
@@ -31,14 +32,16 @@ public class ServerConfigurations {
 
         Yaml yaml = new Yaml();
         try {
+            String env = System.getProperty("profile");
             File initialFile = null;
 
-            try {
-                initialFile = new File(ServerConfigurations.class.getResource("config.yml").toURI());
-            } catch (Exception e) {
-                initialFile = new File("config.yml");
-            }
 
+            try {
+                URL url = Server.class.getResource(env + ".yml");
+                initialFile = new File(url.getFile());
+            } catch (Exception e) {
+                initialFile = new File(env + ".yml");
+            }
             InputStream targetStream = new FileInputStream(initialFile);
             intance = yaml.loadAs(targetStream, ServerConfigurations.class);
 

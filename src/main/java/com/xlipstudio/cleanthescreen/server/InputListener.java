@@ -1,15 +1,10 @@
 package com.xlipstudio.cleanthescreen.server;
 
 import com.xlipstudio.cleanthescreen.communication.Wrap;
-import com.xlipstudio.cleanthescreen.communication.request.Request;
-import com.xlipstudio.cleanthescreen.communication.request.RequestType;
 import com.xlipstudio.cleanthescreen.communication.response.Response;
 import com.xlipstudio.cleanthescreen.communication.sub.WrapType;
 import com.xlipstudio.cleanthescreen.server.server.game.GameSaloon;
-import com.xlipstudio.cleanthescreen.server.server.room.GameRoom;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class InputListener extends Thread {
@@ -36,8 +31,8 @@ public class InputListener extends Thread {
             }*/
 
 
-            if(req.equals("1")) {
-                Wrap wrap = new Wrap(WrapType.RESPONSE, new Response(true,"TEST","0"));
+            if (req.equals("1")) {
+                Wrap wrap = new Wrap(WrapType.RESPONSE, new Response(true, "TEST", "0"));
                 GameSaloon.getInstance().dispatchToAll(wrap);
 
 

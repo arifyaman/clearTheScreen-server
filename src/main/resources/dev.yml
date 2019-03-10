@@ -1,0 +1,19 @@
+serverPort: 36813
+serverLogFile: /home/xlip/work/xlip/cleanTheScreen/server/log/server.out
+
+security:
+  encriptorKey: K0s#k$plm9*48C5!
+  vector: b7$2ssRxZ1vM6!-V
+
+waitingRoom:
+  maxPoolSize: 150
+
+hibarnate:
+  driverClass: com.mysql.cj.jdbc.Driver
+  url: jdbc:mysql://localhost:3306/clearthescreen?useUnicode=true&characterEncoding=UTF-8&verifyServerCertificate=false&useSSL=true
+  username: root
+  password: root
+  showSql: false
+  sessionContextClass: thread
+  ddlAuto: update
+  maxActive: 20
