@@ -111,7 +111,7 @@ public class GameRoom extends Room {
         int player2Score = 0;
 
         for (Cell cell : cells.values()) {
-            if(cell.getDestroyer() != null) {
+            if (cell.getDestroyer() != null) {
                 if (cell.getDestroyer() == player1.getUser()) {
                     player1Score++;
                 } else {
@@ -124,28 +124,36 @@ public class GameRoom extends Room {
         player1.setRemovedCells(player1.getRemovedCells() + player1Score);
         player2.setRemovedCells(player2.getRemovedCells() + player2Score);
         HibernateUtil util = HibernateUtil.getInstance();
-        util.saveOrUpdate(player1, Player.class);
-        util.saveOrUpdate(player2, Player.class);
 
-        if(pool.getClientHandlers().size() == 1) {
+
+        if (pool.getClientHandlers().size() == 1) {
             winnerWrap.getResponse().setPayload(player1Score);
             pool.getClientHandlers().get(0).dispatch(winnerWrap);
-        }else {
+        } else {
             if (player1Score > player2Score) {
+                player1.setWonMatch(player1.getWonMatch() + 1);
+                player2.setLostMatch(player2.getLostMatch() + 1);
                 winnerWrap.getResponse().setPayload(player1Score);
                 pool.getClientHandlers().get(0).dispatch(winnerWrap);
                 loserWrap.getResponse().setPayload(player2Score);
                 pool.getClientHandlers().get(1).dispatch(loserWrap);
 
-            } else {
+            } else if (player1Score < player2Score) {
+                player2.setWonMatch(player2.getWonMatch() + 1);
+                player1.setLostMatch(player1.getLostMatch() + 1);
                 winnerWrap.getResponse().setPayload(player1Score);
                 pool.getClientHandlers().get(1).dispatch(winnerWrap);
                 loserWrap.getResponse().setPayload(player2Score);
                 pool.getClientHandlers().get(0).dispatch(loserWrap);
+            } else {
+                winnerWrap.getResponse().setPayload(player1Score);
+                pool.getClientHandlers().get(1).dispatch(winnerWrap);
+                loserWrap.getResponse().setPayload(player2Score);
+                pool.getClientHandlers().get(0).dispatch(winnerWrap);
             }
         }
-
-
+        util.saveOrUpdate(player1, Player.class);
+        util.saveOrUpdate(player2, Player.class);
 
         match.setPlayer1Score(player1Score);
         match.setPlayer2Score(player2Score);
@@ -155,10 +163,10 @@ public class GameRoom extends Room {
     }
 
     @Override
-    public Wrap welcomeResponse() {
+    public Wrap welcomeResponse(ClientHandler clientHandler) {
         Wrap wrap = new Wrap();
         wrap.setWrapType(WrapType.RESPONSE);
-        Response response = new Response(true, "Welcome to game room", "1");
+        Response response = new Response(true, "Welcome to game room", "100");
         response.setPayload(gson.toJson(ServerConfigurations.getIntance().gameConf));
         wrap.setResponse(response);
         return wrap;
@@ -167,9 +175,9 @@ public class GameRoom extends Room {
     @Override
     public void disconnected(ClientHandler clientHandler) {
         super.disconnected(clientHandler);
-        if(pool.getClientHandlers().size() == 1) {
+        if (pool.getClientHandlers().size() == 1) {
             gameFinished();
-        }else if(pool.getClientHandlers().size() == 0) {
+        } else if (pool.getClientHandlers().size() == 0) {
             resetRoom();
         }
 
@@ -186,7 +194,7 @@ public class GameRoom extends Room {
         this.pool.getClientHandlers().clear();
         this.match = null;
         this.player1 = null;
-        this.player2= null;
+        this.player2 = null;
         this.removedCellSize = 0;
         this.gameFinished = false;
     }

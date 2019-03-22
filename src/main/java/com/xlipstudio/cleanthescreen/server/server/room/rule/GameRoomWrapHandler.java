@@ -9,6 +9,7 @@ import com.xlipstudio.cleanthescreen.server.annotations.HandleRequest;
 import com.xlipstudio.cleanthescreen.server.server.handler.ClientHandler;
 import com.xlipstudio.cleanthescreen.server.server.handler.Pool;
 import com.xlipstudio.cleanthescreen.server.server.room.GameRoom;
+import com.xlipstudio.cleanthescreen.server.server.room.ProfileRoom;
 import com.xlipstudio.cleanthescreen.server.server.room.RegistrationRoom;
 import com.xlipstudio.cleanthescreen.server.server.room.WaitingRoom;
 
@@ -28,12 +29,24 @@ public class GameRoomWrapHandler extends BaseWrapHandler {
 
     @HandleRequest(type = RequestType.GO)
     public void goBack(Wrap wrap, ClientHandler clientHandler, Pool pool) {
-        ((GameRoom) getOriginRoom()).moveToRoom(clientHandler, WaitingRoom.getInstance());
-        clientHandler.dispatch(new Wrap(WrapType.RESPONSE, new Response(true,"Moved to waiting room","101")));
+        Object payload = wrap.getRequest().getPayload();
+
+        if(payload != null) {
+            switch (((String) payload)) {
+                case "PLAY":
+                    ((GameRoom) getOriginRoom()).moveToRoom(clientHandler, RegistrationRoom.getInstance());
+                    clientHandler.dispatch(new Wrap(WrapType.RESPONSE, new Response(true, "Moved to registration room", "101")));
+                case "PROFILE":
+                    ((GameRoom) getOriginRoom()).moveToRoom(clientHandler, ProfileRoom.getInstance());
+                    clientHandler.dispatch(new Wrap(WrapType.RESPONSE, new Response(true, "Moved to profile room", "102")));
+
+
+            }
+
+        }
+
 
     }
-
-
 
 
 }

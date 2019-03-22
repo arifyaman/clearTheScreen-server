@@ -29,7 +29,7 @@ public class WaitingRoom extends Room {
 
 
     @Override
-    public Wrap welcomeResponse() {
+    public Wrap welcomeResponse(ClientHandler clientHandler) {
         Response response = new Response(true, "Waiting room accepted", "1");
         Wrap wrap = new Wrap();
         wrap.setWrapType(WrapType.RESPONSE);

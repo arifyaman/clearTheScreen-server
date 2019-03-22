@@ -53,7 +53,7 @@ public abstract class Room implements Pool.PoolCallBacks {
     }
 
     private void welcomeClientHander(ClientHandler clientHandler) {
-        Wrap response = welcomeResponse();
+        Wrap response = welcomeResponse(clientHandler);
         if (response != null) {
             clientHandler.dispatch(response);
         }
@@ -65,7 +65,7 @@ public abstract class Room implements Pool.PoolCallBacks {
 
     }
 
-    public Wrap welcomeResponse() {
+    public Wrap welcomeResponse(ClientHandler clientHandler) {
         return null;
     }
 

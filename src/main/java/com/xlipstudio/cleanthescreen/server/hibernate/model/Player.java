@@ -12,7 +12,8 @@ public class Player extends BaseEntity implements Serializable {
     private static final long serialVersionUID = 5733840493659566553L;
 
     private long removedCells;
-
+    private long wonMatch;
+    private long lostMatch;
 
     @OneToOne
     private User user;
@@ -31,5 +32,21 @@ public class Player extends BaseEntity implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public long getWonMatch() {
+        return wonMatch;
+    }
+
+    public void setWonMatch(long wonMatch) {
+        this.wonMatch = wonMatch;
+    }
+
+    public long getLostMatch() {
+        return lostMatch;
+    }
+
+    public void setLostMatch(long lostMatch) {
+        this.lostMatch = lostMatch;
     }
 }

@@ -35,7 +35,7 @@ public class Pool implements ClientHandler.ClientHandlerBacks {
     }
 
     private void welcomeClientHander(ClientHandler handler) {
-        Wrap welcomeResponse = poolCallBacks.welcomeResponse();
+        Wrap welcomeResponse = poolCallBacks.welcomeResponse(handler);
         if(welcomeResponse != null){
             handler.dispatch(welcomeResponse);
         }
@@ -80,6 +80,6 @@ public class Pool implements ClientHandler.ClientHandlerBacks {
         void wrapReceived(Wrap wrap, ClientHandler from);
         void newJoin(ClientHandler clientHandler);
         void disconnected(ClientHandler clientHandler);
-        Wrap welcomeResponse();
+        Wrap welcomeResponse(ClientHandler clientHandler);
     }
 }

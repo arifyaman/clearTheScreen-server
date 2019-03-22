@@ -2,6 +2,8 @@ package com.xlipstudio.cleanthescreen.server.server.room.rule;
 
 import com.xlipstudio.cleanthescreen.communication.Wrap;
 import com.xlipstudio.cleanthescreen.communication.request.RequestType;
+import com.xlipstudio.cleanthescreen.communication.response.Response;
+import com.xlipstudio.cleanthescreen.communication.sub.WrapType;
 import com.xlipstudio.cleanthescreen.server.annotations.AllowedReqTypes;
 import com.xlipstudio.cleanthescreen.server.annotations.HandleRequest;
 import com.xlipstudio.cleanthescreen.server.hibernate.HibernateUtil;
@@ -9,6 +11,8 @@ import com.xlipstudio.cleanthescreen.server.hibernate.model.User;
 import com.xlipstudio.cleanthescreen.server.hibernate.model.sub.Role;
 import com.xlipstudio.cleanthescreen.server.server.handler.ClientHandler;
 import com.xlipstudio.cleanthescreen.server.server.handler.Pool;
+import com.xlipstudio.cleanthescreen.server.server.room.ProfileRoom;
+import com.xlipstudio.cleanthescreen.server.server.room.RegistrationRoom;
 import com.xlipstudio.cleanthescreen.server.server.room.WaitingRoom;
 
 import java.util.Date;
@@ -31,10 +35,23 @@ public class RegistrationWrapHandler extends BaseWrapHandler {
 
     @HandleRequest(type = RequestType.GO)
     public Wrap handleGoReq(Wrap wrap, ClientHandler clientHandler, Pool pool) {
-        if (wrap.getRequest().getPayload() != null && wrap.getRequest().getPayload().equals("PLAY")) {
-            getOriginRoom().moveToRoom(clientHandler, WaitingRoom.getInstance());
-            return responderHelper.basicSuccess;
+        Object payload = wrap.getRequest().getPayload();
+
+        if (payload != null) {
+            switch (((String) payload)) {
+                case "PLAY":
+
+                    clientHandler.dispatch(new Wrap(WrapType.RESPONSE, new Response(true, "Moved to waiting room", "101")));
+                    getOriginRoom().moveToRoom(clientHandler, WaitingRoom.getInstance());
+                    return responderHelper.basicSuccess;
+                case "PROFILE":
+                    clientHandler.dispatch(new Wrap(WrapType.RESPONSE, new Response(true, "Moved to profile room", "102")));
+                    getOriginRoom().moveToRoom(clientHandler, ProfileRoom.getInstance());
+                    return responderHelper.basicSuccess;
+            }
+
         }
+
         return responderHelper.notAllowed;
     }
 
