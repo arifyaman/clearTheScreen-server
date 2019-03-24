@@ -48,5 +48,15 @@ public class GameRoomWrapHandler extends BaseWrapHandler {
 
     }
 
+    @HandleRequest(type = RequestType.EXIT)
+    public void handleExitRequest(Wrap wrap, ClientHandler clientHandler, Pool pool) {
+
+        ((GameRoom) getOriginRoom()).moveToRoom(clientHandler, RegistrationRoom.getInstance());
+        clientHandler.dispatch(new Wrap(WrapType.RESPONSE, new Response(true, "Moved to registration room", "101")));
+
+
+
+    }
+
 
 }

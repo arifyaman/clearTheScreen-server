@@ -30,9 +30,9 @@ public class ProfileRoom extends Room {
         Response response = new Response(true, "Player information", "10");
         Player player = HibernateUtil.getInstance().searchPlayerByUser(clientHandler.getUser());
         HashMap props = new HashMap<String, String>();
-        props.put("Won Match", Long.toString(player.getWonMatch()));
-        props.put("Lost Match", Long.toString(player.getLostMatch()));
-        props.put("Cleared Cell", Long.toString(player.getRemovedCells()));
+        props.put("Won Match", player== null ? "0" : Long.toString(player.getWonMatch()));
+        props.put("Lost Match", player== null ? "0" : Long.toString(player.getLostMatch()));
+        props.put("Cleared Cell",player== null ? "0" :  Long.toString(player.getRemovedCells()));
         response.setPayload(props);
         return new Wrap(WrapType.RESPONSE, response);
     }
