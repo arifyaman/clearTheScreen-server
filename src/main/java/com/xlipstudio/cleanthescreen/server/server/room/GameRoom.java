@@ -125,33 +125,52 @@ public class GameRoom extends Room {
         player2.setRemovedCells(player2.getRemovedCells() + player2Score);
         HibernateUtil util = HibernateUtil.getInstance();
 
+        HashMap<String, String> winnerResult = new HashMap<>();
+        HashMap<String, String> loserResult = new HashMap<>();
+
+
 
         if (pool.getClientHandlers().size() == 1) {
             winnerWrap.getResponse().setPayload(player1Score);
             pool.getClientHandlers().get(0).dispatch(winnerWrap);
         } else {
-            if (player1Score > player2Score) {
+            if (player1Score >= player2Score) {
                 player1.setWonMatch(player1.getWonMatch() + 1);
                 player2.setLostMatch(player2.getLostMatch() + 1);
-                winnerWrap.getResponse().setPayload(player1Score);
+                winnerResult.put("result","YOU WIN !");
+                winnerResult.put("You Cleared",String.valueOf(player1Score));
+                winnerResult.put("Enemy Cleared",String.valueOf(player2Score));
+
+                loserResult.put("result","YOU LOSE :(");
+                loserResult.put("You Cleared",String.valueOf(player2Score));
+                loserResult.put("Enemy Cleared",String.valueOf(player1Score));
+
+
+                winnerWrap.getResponse().setPayload(winnerResult);
                 pool.getClientHandlers().get(0).dispatch(winnerWrap);
-                loserWrap.getResponse().setPayload(player2Score);
+                loserWrap.getResponse().setPayload(loserResult);
                 pool.getClientHandlers().get(1).dispatch(loserWrap);
 
             } else if (player1Score < player2Score) {
                 player2.setWonMatch(player2.getWonMatch() + 1);
                 player1.setLostMatch(player1.getLostMatch() + 1);
-                winnerWrap.getResponse().setPayload(player1Score);
+
+                winnerResult.put("result","YOU WIN !");
+                winnerResult.put("You Cleared",String.valueOf(player2Score));
+                winnerResult.put("Enemy Cleared",String.valueOf(player1Score));
+
+                loserResult.put("result","YOU LOSE :(");
+                loserResult.put("You Cleared",String.valueOf(player1Score));
+                loserResult.put("Enemy Cleared",String.valueOf(player2Score));
+
+                winnerWrap.getResponse().setPayload(winnerResult);
                 pool.getClientHandlers().get(1).dispatch(winnerWrap);
-                loserWrap.getResponse().setPayload(player2Score);
+                loserWrap.getResponse().setPayload(loserResult);
                 pool.getClientHandlers().get(0).dispatch(loserWrap);
-            } else {
-                winnerWrap.getResponse().setPayload(player1Score);
-                pool.getClientHandlers().get(1).dispatch(winnerWrap);
-                loserWrap.getResponse().setPayload(player2Score);
-                pool.getClientHandlers().get(0).dispatch(winnerWrap);
             }
         }
+
+
         util.saveOrUpdate(player1, Player.class);
         util.saveOrUpdate(player2, Player.class);
 
