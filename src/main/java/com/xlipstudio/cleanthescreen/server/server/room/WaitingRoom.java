@@ -30,6 +30,10 @@ public class WaitingRoom extends Room {
 
     @Override
     public Wrap welcomeResponse(ClientHandler clientHandler) {
+        AdminRoom.getInstance().dispatchToPool(new Wrap(WrapType.RESPONSE, new Response(true, "SOMEONE IS WAITING", "1")));
+
+
+
         Response response = new Response(true, "Waiting room accepted", "1");
         Wrap wrap = new Wrap();
         wrap.setWrapType(WrapType.RESPONSE);

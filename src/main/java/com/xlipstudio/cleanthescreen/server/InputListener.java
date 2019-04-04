@@ -4,6 +4,7 @@ import com.xlipstudio.cleanthescreen.communication.Wrap;
 import com.xlipstudio.cleanthescreen.communication.response.Response;
 import com.xlipstudio.cleanthescreen.communication.sub.WrapType;
 import com.xlipstudio.cleanthescreen.server.server.game.GameSaloon;
+import com.xlipstudio.cleanthescreen.server.server.room.AdminRoom;
 
 import java.util.Scanner;
 
@@ -33,7 +34,7 @@ public class InputListener extends Thread {
 
             if (req.equals("1")) {
                 Wrap wrap = new Wrap(WrapType.RESPONSE, new Response(true, "TEST", "0"));
-                GameSaloon.getInstance().dispatchToAll(wrap);
+                AdminRoom.getInstance().dispatchToPool(wrap);
 
 
             }

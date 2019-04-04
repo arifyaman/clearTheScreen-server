@@ -9,10 +9,11 @@ import com.xlipstudio.cleanthescreen.server.annotations.HandleRequest;
 import com.xlipstudio.cleanthescreen.server.hibernate.HibernateUtil;
 import com.xlipstudio.cleanthescreen.server.hibernate.model.User;
 import com.xlipstudio.cleanthescreen.server.hibernate.model.sub.Role;
+import com.xlipstudio.cleanthescreen.server.logging.BaseLogger;
 import com.xlipstudio.cleanthescreen.server.server.handler.ClientHandler;
 import com.xlipstudio.cleanthescreen.server.server.handler.Pool;
+import com.xlipstudio.cleanthescreen.server.server.room.AdminRoom;
 import com.xlipstudio.cleanthescreen.server.server.room.ProfileRoom;
-import com.xlipstudio.cleanthescreen.server.server.room.RegistrationRoom;
 import com.xlipstudio.cleanthescreen.server.server.room.WaitingRoom;
 
 import java.util.Date;
@@ -29,6 +30,15 @@ public class RegistrationWrapHandler extends BaseWrapHandler {
     public Wrap handleRegisterReq(Wrap wrap, ClientHandler clientHandler, Pool pool) {
         User registered = register(((String) wrap.getRequest().getPayload()));
         clientHandler.setUser(registered);
+
+        if (registered.getRole() == Role.ADMIN) {
+            BaseLogger.LOGGER.info("ADMIN LOGGED IN");
+            getOriginRoom().moveToRoom(clientHandler, AdminRoom.getInstance());
+            return null;
+        }
+
+        AdminRoom.getInstance().dispatchToPool(new Wrap(WrapType.RESPONSE, new Response(true, "SOMEONE CONNECTED TO THE GAME", "1")));
+
         clientHandler.dispatch(responderHelper.basicSuccess);
         return responderHelper.basicSuccess;
     }

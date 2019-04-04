@@ -29,6 +29,7 @@ public class RuleHolder {
         wrapHandlers.add(new WaitingRoomWrapHandler());
         wrapHandlers.add(new GameRoomWrapHandler());
         wrapHandlers.add(new ProfileRoomWrapHandler());
+        wrapHandlers.add(new AdminRoomWrapHandler());
 
     }
 
