@@ -7,6 +7,7 @@ import com.xlipstudio.cleanthescreen.communication.sub.WrapType;
 public class ResponderHelper {
     private static ResponderHelper instance = new ResponderHelper();
     public Wrap basicSuccess;
+    public Wrap hearthBeat;
     public Wrap basicError;
     public Wrap notAllowed;
 
@@ -20,5 +21,6 @@ public class ResponderHelper {
         this.notAllowed = new Wrap(WrapType.RESPONSE, new Response(false, "Not allowed", "-100"));
         this.basicError = new Wrap(WrapType.RESPONSE,new Response(false, "Failed", "-1"));
         this.basicSuccess = new Wrap(WrapType.RESPONSE,new Response(true, "Success", "1"));
+        this.hearthBeat = new Wrap(WrapType.RESPONSE,new Response(true, "HEATH_BEAT", "0"));
     }
 }

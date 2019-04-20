@@ -10,23 +10,28 @@ import com.xlipstudio.cleanthescreen.server.server.handler.ClientHandler;
 import com.xlipstudio.cleanthescreen.server.server.handler.Pool;
 import com.xlipstudio.cleanthescreen.server.server.room.RegistrationRoom;
 
-@AllowedReqTypes(types = {RequestType.GO,RequestType.EXIT,RequestType.CANCEL})
+@AllowedReqTypes(types = {RequestType.GO,RequestType.EXIT,RequestType.HEARTH_BEAT})
 public class AdminRoomWrapHandler extends BaseWrapHandler {
 
     @Override
     public Wrap processReceivedWrap(Wrap wrap, ClientHandler clientHandler, Pool pool) {
-        clientHandler.dispatch(responderHelper.basicSuccess);
+
         return null;
     }
 
-    @HandleRequest(type = RequestType.EXIT)
-    public Wrap handleExitReq(Wrap wrap, ClientHandler clientHandler, Pool pool) {
-        clientHandler.dispatch(new Wrap(WrapType.RESPONSE, new Response(true,"Moved to registration room","101")));
-        getOriginRoom().moveToRoom(clientHandler, RegistrationRoom.getInstance());
+    @HandleRequest(type = RequestType.GO)
+    public Wrap handleGoReq(Wrap wrap, ClientHandler clientHandler, Pool pool) {
+        clientHandler.dispatch(responderHelper.basicSuccess);
         return responderHelper.basicSuccess;
 
     }
 
+    @HandleRequest(type = RequestType.HEARTH_BEAT)
+    public Wrap handleHearthBeatReq(Wrap wrap, ClientHandler clientHandler, Pool pool) {
+        clientHandler.dispatch(responderHelper.hearthBeat);
+        return responderHelper.hearthBeat;
+
+    }
 
 
 
