@@ -1,5 +1,5 @@
 serverPort: 36813
-serverLogFile: /home/xlip/work/xlip/cleanTheScreen/server/log/server.out
+serverLogFile: server.out
 
 security:
   encriptorKey: K0s#k$plm9*48C5!

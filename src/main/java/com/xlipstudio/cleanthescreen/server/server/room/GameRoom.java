@@ -131,7 +131,10 @@ public class GameRoom extends Room {
 
 
         if (pool.getClientHandlers().size() == 1) {
-            winnerWrap.getResponse().setPayload(player1Score);
+            winnerResult.put("result","YOU WIN !");
+            winnerResult.put("Result: ","Enemy gave up :(");
+
+            winnerWrap.getResponse().setPayload(winnerResult);
             pool.getClientHandlers().get(0).dispatch(winnerWrap);
         } else {
             if (player1Score >= player2Score) {
