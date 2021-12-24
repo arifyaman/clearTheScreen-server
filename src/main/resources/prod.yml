@@ -10,10 +10,11 @@ waitingRoom:
 
 hibarnate:
   driverClass: com.mysql.cj.jdbc.Driver
-  url: jdbc:mysql://localhost:3306/clearthescreen?useUnicode=true&characterEncoding=UTF-8&verifyServerCertificate=false&useSSL=true
+  url: jdbc:mysql://localhost:3306/clearthescreen?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&autoReconnectForPools=true&verifyServerCertificate=false&useSSL=true
   username: root
   password: K8y348Q
   showSql: false
   sessionContextClass: thread
+  autoReconnect: true
   ddlAuto: update
   maxActive: 20

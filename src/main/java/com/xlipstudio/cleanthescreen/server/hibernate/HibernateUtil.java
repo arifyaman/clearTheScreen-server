@@ -110,8 +110,7 @@ public class HibernateUtil {
 
     public <T> T getModel(long id, Class<T> tClass) {
 
-        T model = session.get(tClass, id);
-        return model;
+        return session.get(tClass, id);
 
     }
 
